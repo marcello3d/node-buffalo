@@ -1,0 +1,22 @@
+{
+  "name": "buffalo",
+  "description": "Buffalo is a lightweight BSON library for Node.js",
+  "version": "0.1.0-unstable",
+  "homepage": "https://github.com/marcello3d/node-buffalo",
+  "repository": "git://github.com/marcello3d/node-buffalo.git",
+  "author": "Marcello Bastéa-Forte <marcello@cellosoft.com> (http://marcello.cellosoft.com/)",
+  "main": "buffalo.js",
+  "keywords": ["mongo", "mongodb", "bson", "binary", "binary json"],
+  "dependencies": {
+    "tosource": "0.1.1"
+  },
+  "devDependencies": {
+    "vows": "~0.5"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/vows --spec"
+  },
+  "engines": {
+    "node": ">=0.4.0"
+  }
+}
