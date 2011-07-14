@@ -109,7 +109,24 @@ vows.describe('BSON').addBatch({
     "after serializing [-12345678901234567890]": testBackAndForth([-12345678901234567890]),
     "after serializing [-123456789012345678901234567890]": testBackAndForth([-123456789012345678901234567890]),
     "after serializing [-1234567890123456.78901234567890]": testBackAndForth([-1234567890123456.78901234567890]),
-    "after serializing [new Buffer(\"hello\", \"utf8\")]": testBackAndForth([new Buffer("hello", "utf8")]),
+    "after serializing [new Buffer(\"hello\", \"utf8\")]": {
+        topic: BSON.serialize([new Buffer("hello", "utf8")]),
+        "has length": function(bson) {
+            assert.isNotZero(bson.length)
+        },
+        "when reparsed,": {
+            topic: function(object) {
+                return BSON.parse(object)
+            },
+            "is buffer": function(object) {
+                assert.instanceOf(object[0], Buffer)
+            },
+            "buffer text matches original": function(object) {
+                // Using equal with two regexps doesn't work
+                assert.equal(object[0].toString(), "hello")
+            }
+        }
+    },
     "after serializing complex object": testBackAndForth({
         string: "Strings are great",
         decimal: 3.14159265,
