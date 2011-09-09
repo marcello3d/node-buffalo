@@ -80,6 +80,7 @@ vows.describe('BSON').addBatch({
     "after serializing []": testBackAndForth([]),
     "after serializing [1,2,3]": testBackAndForth([1,2,3]),
     "after serializing ['a','b','c']": testBackAndForth(['a','b','c']),
+    "after serializing ['è']": testBackAndForth(['à', 'é', 'è', 'ê', 'ñ', 'ù', 'ç', 'ï']),
     "after serializing ['short','longer','even longer... Hamburger swine boudin bresaola, tongue meatball biltong rump. Strip steak pig venison tongue. Tenderloin bresaola brisket jowl ham, flank shankle drumstick tongue hamburger swine. Pastrami hamburger boudin beef ribs, sirloin jerky sausage tail bresaola strip steak pork loin corned beef. Turkey jerky jowl sirloin. Chuck pig hamburger fatback. Corned beef beef brisket swine short ribs shoulder.']": testBackAndForth(['short','longer','even longer... Hamburger swine boudin bresaola, tongue meatball biltong rump. Strip steak pig venison tongue. Tenderloin bresaola brisket jowl ham, flank shankle drumstick tongue hamburger swine. Pastrami hamburger boudin beef ribs, sirloin jerky sausage tail bresaola strip steak pork loin corned beef. Turkey jerky jowl sirloin. Chuck pig hamburger fatback. Corned beef beef brisket swine short ribs shoulder.']),
     "after serializing [new Date]": testBackAndForth([new Date]),
     "after serializing {}": testBackAndForth({}),
