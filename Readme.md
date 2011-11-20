@@ -5,6 +5,8 @@ Buffalo is a lightweight [BSON][1] library for [Node.js][2]. It was built as a n
 
 The motivation is to make a fast and simple parser and serializer for BSON.
 
+[![Build Status](https://secure.travis-ci.org/marcello3d/node-buffalo.png)](http://travis-ci.org/marcello3d/node-buffalo)
+
 Installation
 ------------
 **DISCLAIMER: The API is experimental. I will be adding, removing, and changing the API in the
