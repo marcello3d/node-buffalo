@@ -1,0 +1,3 @@
+[submodule "node_modules/tosource"]
+	path = node_modules/tosource
+	url = git://github.com/marcello3d/node-tosource.git
