@@ -1,6 +1,7 @@
-var BSON = require('../buffalo'),
-    BSONPure = require('mongodb').BSONPure.BSON,
-    BSONNative = require('mongodb').BSONNative.BSON
+var BSON = require('../buffalo')
+var mongoNative = require('mongodb')
+var BSONPure = mongoNative.BSONPure.BSON
+var BSONNative = mongoNative.BSONNative && mongoNative.BSONNative.BSON
 
 var COUNT = 100000
 var object = {
@@ -35,14 +36,14 @@ for (i=COUNT; --i>=0; ) {
 end = new Date
 console.log(COUNT + "x (serializedBSONPure = BSONPure.serialize(object))       time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
-
-
-start = new Date
-for (i=COUNT; --i>=0; ) {
-    serializedBSONNative = BSONNative.serialize(object, null, true)
+if (BSONNative) {
+    start = new Date
+    for (i=COUNT; --i>=0; ) {
+        serializedBSONNative = BSONNative.serialize(object, null, true)
+    }
+    end = new Date
+    console.log(COUNT + "x (serializedBSONNative = BSONNative.serialize(object))   time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 }
-end = new Date
-console.log(COUNT + "x (serializedBSONNative = BSONNative.serialize(object))   time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
 start = new Date
 for (i=COUNT; --i>=0; ) {
@@ -54,9 +55,10 @@ console.log(COUNT + "x (serializedJSON = JSON.stringify(object))               t
 console.log("BSON size (bytes):", serializedBSON.length)
 
 console.log("serializedBSON == serializedBSONPure ? "+compare(serializedBSON,serializedBSONPure))
-console.log("serializedBSON == serializedBSONNative ? "+compare(serializedBSON,serializedBSONNative))
-console.log("serializedBSONPure == serializedBSONNative ? "+compare(serializedBSONNative,serializedBSONPure))
-
+if (BSONNative) {
+    console.log("serializedBSON == serializedBSONNative ? "+compare(serializedBSON,serializedBSONNative))
+    console.log("serializedBSONPure == serializedBSONNative ? "+compare(serializedBSONNative,serializedBSONPure))
+}
 
 
 start = new Date
@@ -75,12 +77,14 @@ end = new Date
 console.log(COUNT + "x BSONPure.deserialize(serializedBSONPure)                 time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
 
-start = new Date
-for (i=COUNT; --i>=0; ) {
-    deserializedBSONNative = BSONNative.deserialize(serializedBSONNative)
+if (BSONNative) {
+    start = new Date
+    for (i=COUNT; --i>=0; ) {
+        deserializedBSONNative = BSONNative.deserialize(serializedBSONNative)
+    }
+    end = new Date
+    console.log(COUNT + "x BSONNative.deserialize(serializedBSONNative)             time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 }
-end = new Date
-console.log(COUNT + "x BSONNative.deserialize(serializedBSONNative)             time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
 
 start = new Date
@@ -94,7 +98,7 @@ console.log(COUNT + "x JSON.parse(serializedJSON)                               
 function compare(b1, b2) {
     try {
         require('assert').deepEqual(b1,b2)
-        return true   
+        return true
     } catch (e) {
         console.error(e)
         return false
@@ -103,11 +107,11 @@ function compare(b1, b2) {
 
 console.log("object == deserializedBSON ? "+compare(object,deserializedBSON))
 console.log("object == deserializedBSONPure ? "+compare(object,deserializedBSONPure))
-console.log("object == deserializedBSONNative ? "+compare(object,deserializedBSONNative))
+if (BSONNative) console.log("object == deserializedBSONNative ? "+compare(object,deserializedBSONNative))
 console.log("object == deserializedJSON ? "+compare(object,deserializedJSON))
 console.log("deserializedBSON == deserializedBSONPure ? "+compare(deserializedBSON,deserializedBSONPure))
-console.log("deserializedBSON == deserializedBSONNative ? "+compare(deserializedBSON,deserializedBSONNative))
-console.log("deserializedBSONPure == deserializedBSONNative ? "+compare(deserializedBSONNative,deserializedBSONPure))
+if (BSONNative) console.log("deserializedBSON == deserializedBSONNative ? "+compare(deserializedBSON,deserializedBSONNative))
+if (BSONNative) console.log("deserializedBSONPure == deserializedBSONNative ? "+compare(deserializedBSONNative,deserializedBSONPure))
 console.log("deserializedJSON == deserializedBSON ? "+compare(deserializedJSON,deserializedBSON))
 console.log("deserializedJSON == deserializedBSONPure ? "+compare(deserializedJSON,deserializedBSONPure))
-console.log("deserializedJSON == deserializedBSONNative ? "+compare(deserializedJSON,deserializedBSONNative))
+if (BSONNative) console.log("deserializedJSON == deserializedBSONNative ? "+compare(deserializedJSON,deserializedBSONNative))
