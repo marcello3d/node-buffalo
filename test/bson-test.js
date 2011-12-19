@@ -1,4 +1,4 @@
-/* Mongolian DeadBeef by Marcello Bastea-Forte - zlib license */
+/* Buffalo by Marcello Bastea-Forte - zlib license */
 
 var vows = require('vows'),
     assert = require('assert'),
