@@ -1,14 +1,11 @@
 /* Buffalo by Marcello Bastea-Forte - zlib license */
 
-var vows = require('vows'),
-    assert = require('assert'),
-    BSON = require('../lib/bson.js'),
-    Long = BSON.Long
+var BSON = require('../buffalo')
+var Long = BSON.Long
 
 function C(character) {
     return character.charCodeAt(0)
 }
-
 
 var bsonSample1 = [
                 0x16, 0x00, 0x00, 0x00,
@@ -36,99 +33,80 @@ var bsonSample2Expected = {"BSON": ["awesome", 5.05, 1986]}
 
 
 function testBackAndForth(originalObject) {
-    return {
-        topic: BSON.serialize(originalObject),
-        "has length": function(bson) {
-            assert.isNotZero(bson.length)
-        },
-        "when reparsed,": {
-            topic: function(object) {
-                return BSON.parse(object)
-            },
-            "matches original": function(object) {
-                assert.deepEqual(object, originalObject)
-            }
-        }
+    return function(test) {
+        var serialized = BSON.serialize(originalObject)
+        test.ok(serialized.length)
+        var parsed = BSON.parse(serialized)
+        test.deepEqual(parsed, originalObject)
+        test.done()
     }
 }
 
-vows.describe('BSON').addBatch({
-    "sample BSON 1": {
-        topic: BSON.parse(new Buffer(bsonSample1)),
-        "parses to {\"hello\": \"world\"}": function (object) {
-            assert.deepEqual(object, bsonSample1Expected)
-        }
+module.exports = {
+    "sample BSON 1 parses to {\"hello\": \"world\"}": function(test) {
+        var parsed = BSON.parse(new Buffer(bsonSample1))
+        test.deepEqual(parsed, bsonSample1Expected)
+        test.done()
     },
-    "sample BSON 2": {
-        topic: BSON.parse(new Buffer(bsonSample2)),
-        "parses to {\"BSON\": [\"awesome\", 5.05, 1986]}": function (object) {
-            assert.deepEqual(object, bsonSample2Expected)
-        }
+    "sample BSON 2 parses to {\"BSON\": [\"awesome\", 5.05, 1986]}": function(test) {
+        var parsed = BSON.parse(new Buffer(bsonSample2))
+        test.deepEqual(parsed, bsonSample2Expected)
+        test.done()
     },
-    "javascript object {\"hello\": \"world\"}": {
-        topic: BSON.serialize(bsonSample1Expected),
-        "serializes correctly": function(object) {
-            assert.equal(object.toString('base64'), new Buffer(bsonSample1).toString('base64'))
-        }
+    "javascript object {\"hello\": \"world\"}": function(test) {
+        var serialized = BSON.serialize(bsonSample1Expected)
+        test.equal(serialized.toString('base64'), 
+                   new Buffer(bsonSample1).toString('base64'))
+        test.done()
     },
-    "javascript object {\"BSON\": [\"awesome\", 5.05, 1986]}": {
-        topic: BSON.serialize(bsonSample2Expected),
-        "serializes correctly": function(object) {
-            assert.equal(object.toString('base64'), new Buffer(bsonSample2).toString('base64'))
-        }
+    "javascript object {\"BSON\": [\"awesome\", 5.05, 1986]}": function(test) {
+        var serialized = BSON.serialize(bsonSample2Expected)
+        test.equal(serialized.toString('base64'), 
+                   new Buffer(bsonSample2).toString('base64'))
+        test.done()
     },
-    "after serializing []": testBackAndForth([]),
-    "after serializing [1,2,3]": testBackAndForth([1,2,3]),
-    "after serializing ['a','b','c']": testBackAndForth(['a','b','c']),
-    "after serializing ['è']": testBackAndForth(['à', 'é', 'è', 'ê', 'ñ', 'ù', 'ç', 'ï']),
-    "after serializing ['short','longer','even longer... Hamburger swine boudin bresaola, tongue meatball biltong rump. Strip steak pig venison tongue. Tenderloin bresaola brisket jowl ham, flank shankle drumstick tongue hamburger swine. Pastrami hamburger boudin beef ribs, sirloin jerky sausage tail bresaola strip steak pork loin corned beef. Turkey jerky jowl sirloin. Chuck pig hamburger fatback. Corned beef beef brisket swine short ribs shoulder.']": testBackAndForth(['short','longer','even longer... Hamburger swine boudin bresaola, tongue meatball biltong rump. Strip steak pig venison tongue. Tenderloin bresaola brisket jowl ham, flank shankle drumstick tongue hamburger swine. Pastrami hamburger boudin beef ribs, sirloin jerky sausage tail bresaola strip steak pork loin corned beef. Turkey jerky jowl sirloin. Chuck pig hamburger fatback. Corned beef beef brisket swine short ribs shoulder.']),
-    "after serializing [new Date]": testBackAndForth([new Date]),
-    "after serializing {}": testBackAndForth({}),
-    "after serializing {'hello':'there'}": testBackAndForth({'hello':'there'}),
-    "after serializing {level1:{level2:{level3:{level4:{level5:{level6:{level7:'tada!'}}}}}}}": testBackAndForth({level1:{level2:{level3:{level4:{level5:{level6:{level7:'tada!'}}}}}}}),
-    "after serializing [1.500343]": testBackAndForth([1.500343]),
-    "after serializing [-1.500343]": testBackAndForth([-1.500343]),
-    "after serializing [1<<20]": testBackAndForth([1<<20]),
-    "after serializing [1<<28]": testBackAndForth([1<<28]),
-    "after serializing [1<<31]": testBackAndForth([1<<31]),
-    "after serializing [1<<35]": testBackAndForth([1<<35]),
-    "after serializing [1<<40]": testBackAndForth([1<<40]),
-    "after serializing [1<<60]": testBackAndForth([1<<60]),
-    "after serializing [true]": testBackAndForth([true]),
-    "after serializing [false]": testBackAndForth([false]),
-    "after serializing [true,false,true,false,0,1]": testBackAndForth([true,false,true,false,0,1]),
-    "after serializing [null]": testBackAndForth([null]),
-    "after serializing [undefined]": testBackAndForth([undefined]),
-    "after serializing [1234567890]": testBackAndForth([1234567890]),
-    "after serializing [1234567890123456]": testBackAndForth([1234567890123456]),
-    "after serializing [12345678901234567890]": testBackAndForth([12345678901234567890]),
-    "after serializing [123456789012345678901234567890]": testBackAndForth([123456789012345678901234567890]),
-    "after serializing [1234567890123456.78901234567890]": testBackAndForth([1234567890123456.78901234567890]),
-    "after serializing [new Long(100,100)]": testBackAndForth([new Long(100,100)]),
-    "after serializing [-1234567890]": testBackAndForth([-1234567890]),
-    "after serializing [-1234567890123456]": testBackAndForth([-1234567890123456]),
-    "after serializing [-12345678901234567890]": testBackAndForth([-12345678901234567890]),
-    "after serializing [-123456789012345678901234567890]": testBackAndForth([-123456789012345678901234567890]),
-    "after serializing [-1234567890123456.78901234567890]": testBackAndForth([-1234567890123456.78901234567890]),
-    "after serializing [new Buffer(\"hello\", \"utf8\")]": {
-        topic: BSON.serialize([new Buffer("hello", "utf8")]),
-        "has length": function(bson) {
-            assert.isNotZero(bson.length)
-        },
-        "when reparsed,": {
-            topic: function(object) {
-                return BSON.parse(object)
-            },
-            "is buffer": function(object) {
-                assert.instanceOf(object[0], Buffer)
-            },
-            "buffer text matches original": function(object) {
-                // Using equal with two regexps doesn't work
-                assert.equal(object[0].toString(), "hello")
-            }
-        }
+    "serialize/parse []": testBackAndForth([]),
+    "serialize/parse [1,2,3]": testBackAndForth([1,2,3]),
+    "serialize/parse ['a','b','c']": testBackAndForth(['a','b','c']),
+    "serialize/parse ['è']": testBackAndForth(['à', 'é', 'è', 'ê', 'ñ', 'ù', 'ç', 'ï']),
+    "serialize/parse ['short','longer','even longer... Hamburger swine boudin bresaola, tongue meatball biltong rump. Strip steak pig venison tongue. Tenderloin bresaola brisket jowl ham, flank shankle drumstick tongue hamburger swine. Pastrami hamburger boudin beef ribs, sirloin jerky sausage tail bresaola strip steak pork loin corned beef. Turkey jerky jowl sirloin. Chuck pig hamburger fatback. Corned beef beef brisket swine short ribs shoulder.']": testBackAndForth(['short','longer','even longer... Hamburger swine boudin bresaola, tongue meatball biltong rump. Strip steak pig venison tongue. Tenderloin bresaola brisket jowl ham, flank shankle drumstick tongue hamburger swine. Pastrami hamburger boudin beef ribs, sirloin jerky sausage tail bresaola strip steak pork loin corned beef. Turkey jerky jowl sirloin. Chuck pig hamburger fatback. Corned beef beef brisket swine short ribs shoulder.']),
+    "serialize/parse [new Date]": testBackAndForth([new Date]),
+    "serialize/parse {}": testBackAndForth({}),
+    "serialize/parse {'hello':'there'}": testBackAndForth({'hello':'there'}),
+    "serialize/parse {level1:{level2:{level3:{level4:{level5:{level6:{level7:'tada!'}}}}}}}": testBackAndForth({level1:{level2:{level3:{level4:{level5:{level6:{level7:'tada!'}}}}}}}),
+    "serialize/parse [1.500343]": testBackAndForth([1.500343]),
+    "serialize/parse [-1.500343]": testBackAndForth([-1.500343]),
+    "serialize/parse [1<<20]": testBackAndForth([1<<20]),
+    "serialize/parse [1<<28]": testBackAndForth([1<<28]),
+    "serialize/parse [1<<31]": testBackAndForth([1<<31]),
+    "serialize/parse [1<<35]": testBackAndForth([1<<35]),
+    "serialize/parse [1<<40]": testBackAndForth([1<<40]),
+    "serialize/parse [1<<60]": testBackAndForth([1<<60]),
+    "serialize/parse [true]": testBackAndForth([true]),
+    "serialize/parse [false]": testBackAndForth([false]),
+    "serialize/parse [true,false,true,false,0,1]": testBackAndForth([true,false,true,false,0,1]),
+    "serialize/parse [null]": testBackAndForth([null]),
+    "serialize/parse [undefined]": testBackAndForth([undefined]),
+    "serialize/parse [1234567890]": testBackAndForth([1234567890]),
+    "serialize/parse [1234567890123456]": testBackAndForth([1234567890123456]),
+    "serialize/parse [12345678901234567890]": testBackAndForth([12345678901234567890]),
+    "serialize/parse [123456789012345678901234567890]": testBackAndForth([123456789012345678901234567890]),
+    "serialize/parse [1234567890123456.78901234567890]": testBackAndForth([1234567890123456.78901234567890]),
+    "serialize/parse [new Long(100,100)]": testBackAndForth([new Long(100,100)]),
+    "serialize/parse [-1234567890]": testBackAndForth([-1234567890]),
+    "serialize/parse [-1234567890123456]": testBackAndForth([-1234567890123456]),
+    "serialize/parse [-12345678901234567890]": testBackAndForth([-12345678901234567890]),
+    "serialize/parse [-123456789012345678901234567890]": testBackAndForth([-123456789012345678901234567890]),
+    "serialize/parse [-1234567890123456.78901234567890]": testBackAndForth([-1234567890123456.78901234567890]),
+    "serialize/parse [new Buffer(\"hello\", \"utf8\")]": function(test) {
+        var serialized = BSON.serialize([new Buffer("hello", "utf8")])
+        test.ok(serialized.length)
+        var parsed = BSON.parse(serialized)
+        test.ok(parsed[0] instanceof Buffer)
+        test.equal(parsed[0].toString(), "hello")
+        test.done()
     },
-    "after serializing complex object": testBackAndForth({
+    "serialize/parse complex object": testBackAndForth({
         string: "Strings are great",
         decimal: 3.14159265,
         bool: true,
@@ -140,111 +118,56 @@ vows.describe('BSON').addBatch({
         subArray: [1,2,3,4,5,6,7,8,9,10],
         anotherString: "another string"
     }),
-    "after serializing [/hello/i]": {
-        topic: BSON.serialize([/hello/i]),
-        "has length": function(bson) {
-            assert.isNotZero(bson.length)
-        },
-        "when reparsed,": {
-            topic: function(object) {
-                return BSON.parse(object)
-            },
-            "is regexp": function(object) {
-                assert.instanceOf(object[0], RegExp)
-            },
-            "regexp matches original": function(object) {
-                // Using equal with two regexps doesn't work
-                assert.equal(object[0].toString(), "/hello/i")
-            }
-        }
+    "serialize/parse [/hello/i]": function(test) {
+        var serialized = BSON.serialize([/hello/i])
+        test.ok(serialized.length)
+        var parsed = BSON.parse(serialized)
+        test.ok(parsed[0] instanceof RegExp)
+        test.equal(parsed[0].toString(), '/hello/i')
+        test.done()
     },
-    "after serializing [/hello[.]+/i]": {
-        topic: BSON.serialize([/hello[.]+/i]),
-        "has length": function(bson) {
-            assert.isNotZero(bson.length)
-        },
-        "when reparsed,": {
-            topic: function(object) {
-                return BSON.parse(object)
-            },
-            "is regexp": function(object) {
-                assert.instanceOf(object[0], RegExp)
-            },
-            "regexp matches original": function(object) {
-                assert.equal(object[0].toString(), "/hello[.]+/i")
-            }
-        }
+    "serialize/parse [/hello[.]+/i]": function(test) {
+        var serialized = BSON.serialize([/hello[.]+/i])
+        test.ok(serialized.length)
+        var parsed = BSON.parse(serialized)
+        test.ok(parsed[0] instanceof RegExp)
+        test.equal(parsed[0].toString(),"/hello[.]+/i")
+        test.done()
     },
-    "after serializing [function(){}]": {
-        topic: BSON.serialize([function(){}]),
-        "has length": function(bson) {
-            assert.isNotZero(bson.length)
-        },
-        "when reparsed,": {
-            topic: function(object) {
-                return BSON.parse(object)
-            },
-            "is function": function(object) {
-                assert.isFunction(object[0])
-            },
-            "function matches original": function(object) {
-                // We need a fuzzy match, since serializing jumbles the function slightly
-                assert.matches(object[0].toString().replace(/[\s\n]+/g,''),
-                    /^function[^\(]*\(\){}/)
-            }
-        }
+    "serialize/parse [function(){}]": function(test) {
+        var serialized = BSON.serialize([function(){}])
+        test.ok(serialized.length)
+        var parsed = BSON.parse(serialized)
+        test.equal(typeof parsed[0], 'function')
+        // We need a fuzzy match, since serializing jumbles the function slightly
+        test.ok(/^function[^\(]*\(\){}/.test(parsed[0].toString().replace(/[\s\n]+/g,'')))
+        test.done()
     },
-    "after serializing [function(x,y){ return x + y }]": {
-        topic: BSON.serialize([function(x,y){
+    "serialize/parse [function(x,y){ return x + y }]": function(test) {
+        var serialized = BSON.serialize([function(x,y){
             return x + y
-        }]),
-        "has length": function(bson) {
-            assert.isNotZero(bson.length)
-        },
-        "when reparsed,": {
-            topic: function(object) {
-                return BSON.parse(object)
-            },
-            "is function": function(object) {
-                assert.isFunction(object[0])
-            },
-            "function matches original": function(object) {
-                assert.matches(object[0].toString().replace(/[\s\n]+/g,''),
-                    /function[^(]*\(x,y\)\{returnx\+y\}/)
-            },
-            "function evaluation with arguments (4,5) returns 9": function(object) {
-                assert.equal(object[0](4,5), 9)
-            }
-        }
+        }])
+        test.ok(serialized.length)
+        var parsed = BSON.parse(serialized)
+        test.equal(typeof parsed[0], 'function')
+        test.ok(/function[^(]*\(x,y\)\{returnx\+y\}/.test(parsed[0].toString().replace(/[\s\n]+/g,'')))
+        test.equal(parsed[0](4,5), 9)
+        test.done()
     },
-    "after serializing scoped function(){ return x + y } (with x=4, y=5)": {
-        topic: function() {
-            var func = function() {
-                return x + y
-            }
-            func.scope = {
-                x:4,
-                y:5
-            }
-            return BSON.serialize([func])
-        },
-        "has length": function(bson) {
-            assert.isNotZero(bson.length)
-        },
-        "when reparsed,": {
-            topic: function(object) {
-                return BSON.parse(object)
-            },
-            "is function": function(object) {
-                assert.isFunction(object[0])
-            },
-            "function matches original": function(object) {
-                assert.matches(object[0].toString().replace(/[\s\n]+/g,''),
-                    /function[^(]*\(\)\{with\({x:4,y:5}\){returnx\+y\}}/)
-            },
-            "function evaluation returns 9": function(object) {
-                assert.equal(object[0](), 9)
-            }
+    "serialize/parse scoped function(){ return x + y } (with x=4, y=5)": function(test) {
+        var func = function() {
+            return x + y
         }
+        func.scope = {
+            x:4,
+            y:5
+        }
+        var serialized = BSON.serialize([func])
+        test.ok(serialized.length)
+        var parsed = BSON.parse(serialized)
+        test.equal(typeof parsed[0], 'function')
+        test.ok(/function[^(]*\(\)\{with\({x:4,y:5}\){returnx\+y\}}/.test(parsed[0].toString().replace(/[\s\n]+/g,'')))
+        test.equal(parsed[0](), 9)
+        test.done()
     }
-}).export(module)
+}
