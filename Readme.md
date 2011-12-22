@@ -1,7 +1,7 @@
 Buffalo
 ==================
-Buffalo is a lightweight [BSON][1] library for [Node.js][2]. It was built as a new underlying engine for
-[Mongolian DeadBeef][3].
+Buffalo is a lightweight [BSON][1] and [Mongo Wire Protocol][2] library for [Node.js][3]. It was built as the underlying
+engine for [Mongolian DeadBeef][4].
 
 The motivation is to make a fast and simple parser and serializer for BSON.
 
@@ -29,7 +29,9 @@ Buffalo exposes two methods:
 And several types:
 
     exports.Long // goog.math.Long - http://closure-library.googlecode.com/svn/docs/class_goog_math_Long.html
-    exports.ObjectId = function(bytes) // bytes should be a 12-byte Buffer, accessible via the bytes property
+    exports.ObjectId = function(buffer) // buffer must be a 12-byte Buffer, accessible via the bytes property
+    exports.ObjectId = function(string) // string must be a 24-char hex string
+    exports.ObjectId = function() // generates an ObjectId
     exports.Timestamp // under construction
 
 The BSON types are mapped as follows:
@@ -72,9 +74,10 @@ Try it out and send me feedback! Unit tests and documentation are good, too.
 
 License
 -------
-Buffalo is open source software under the [zlib license][4].
+Buffalo is open source software under the [zlib license][5].
 
 [1]: http://bsonspec.org/#/specification
-[2]: http://nodejs.org/
-[3]: https://github.com/marcello3d/node-mongolian
-[4]: https://github.com/marcello3d/node-buffalo/blob/master/LICENSE
+[2]: http://www.mongodb.org/display/DOCS/Mongo+Wire+Protocol
+[3]: http://nodejs.org/
+[4]: https://github.com/marcello3d/node-mongolian
+[5]: https://github.com/marcello3d/node-buffalo/blob/master/LICENSE
