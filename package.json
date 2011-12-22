@@ -1,12 +1,12 @@
 {
   "name": "buffalo",
-  "description": "Buffalo is a lightweight BSON library for Node.js",
-  "version": "0.1.2-unstable",
+  "description": "Buffalo is a lightweight BSON and Mongo Wire Protocol library for Node.js",
+  "version": "0.1.2",
   "homepage": "https://github.com/marcello3d/node-buffalo",
   "repository": "git://github.com/marcello3d/node-buffalo.git",
   "author": "Marcello Bastéa-Forte <marcello@cellosoft.com> (http://marcello.cellosoft.com/)",
   "main": "buffalo.js",
-  "keywords": ["mongo", "mongodb", "bson", "binary", "binary json"],
+  "keywords": ["mongo", "mongodb", "mongo wire protocol", "bson", "binary", "binary json"],
   "dependencies": {
     "tosource": "0.1.1"
   },
