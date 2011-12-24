@@ -189,7 +189,7 @@ function testReplyMongoNative() {
         var reply = new mongodb.MongoReply
         var message = replies[i]
         reply.parseHeader(message, mongodb.BSONPure)
-        reply.parseBody(message, mongodb.BSONPure, null)
+        reply.parseBody(message, mongodb.BSONPure, null, function(){})
     }
 }
 
