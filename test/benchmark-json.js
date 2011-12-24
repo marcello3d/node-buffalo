@@ -26,7 +26,7 @@ for (i=COUNT; --i>=0; ) {
     serializedBSON = BSON.serialize(object)
 }
 end = new Date
-console.log(COUNT + "x (serializedBSON = BSON.serialize(object))               time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
+console.log(COUNT + "x buffalo.serialize(object)                      time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
 
 start = new Date
@@ -34,7 +34,7 @@ for (i=COUNT; --i>=0; ) {
     serializedBSONPure = BSONPure.serialize(object, null, true)
 }
 end = new Date
-console.log(COUNT + "x (serializedBSONPure = BSONPure.serialize(object))       time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
+console.log(COUNT + "x mongodb.BSONPure.serialize(object)             time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
 if (BSONNative) {
     start = new Date
@@ -42,7 +42,7 @@ if (BSONNative) {
         serializedBSONNative = BSONNative.serialize(object, null, true)
     }
     end = new Date
-    console.log(COUNT + "x (serializedBSONNative = BSONNative.serialize(object))   time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
+    console.log(COUNT + "x mongodb.BSONNative.serialize(object)       time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 }
 
 start = new Date
@@ -50,15 +50,7 @@ for (i=COUNT; --i>=0; ) {
     serializedJSON = JSON.stringify(object)
 }
 end = new Date
-console.log(COUNT + "x (serializedJSON = JSON.stringify(object))               time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
-
-console.log("BSON size (bytes):", serializedBSON.length)
-
-console.log("serializedBSON == serializedBSONPure ? "+compare(serializedBSON,serializedBSONPure))
-if (BSONNative) {
-    console.log("serializedBSON == serializedBSONNative ? "+compare(serializedBSON,serializedBSONNative))
-    console.log("serializedBSONPure == serializedBSONNative ? "+compare(serializedBSONNative,serializedBSONPure))
-}
+console.log(COUNT + "x JSON.stringify(object)                         time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
 
 start = new Date
@@ -66,7 +58,7 @@ for (i=COUNT; --i>=0; ) {
     deserializedBSON = BSON.parse(serializedBSON)
 }
 end = new Date
-console.log(COUNT + "x BSON.parse(serializedBSON)                               time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
+console.log(COUNT + "x buffalo.parse(buffer)                          time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
 
 start = new Date
@@ -74,7 +66,7 @@ for (i=COUNT; --i>=0; ) {
     deserializedBSONPure = BSONPure.deserialize(serializedBSONPure)
 }
 end = new Date
-console.log(COUNT + "x BSONPure.deserialize(serializedBSONPure)                 time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
+console.log(COUNT + "x mongodb.BSONPure.deserialize(buffer)           time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
 
 if (BSONNative) {
@@ -83,7 +75,7 @@ if (BSONNative) {
         deserializedBSONNative = BSONNative.deserialize(serializedBSONNative)
     }
     end = new Date
-    console.log(COUNT + "x BSONNative.deserialize(serializedBSONNative)             time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
+    console.log(COUNT + "x mongodb.BSONNative.deserialize(buffer)     time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 }
 
 
@@ -92,7 +84,7 @@ for (i=COUNT; --i>=0; ) {
     deserializedJSON = JSON.parse(serializedJSON)
 }
 end = new Date
-console.log(COUNT + "x JSON.parse(serializedJSON)                               time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
+console.log(COUNT + "x JSON.parse(string)                             time = ", end - start, "ms -", COUNT * 1000 / (end - start), " ops/sec")
 
 
 function compare(b1, b2) {
@@ -104,14 +96,3 @@ function compare(b1, b2) {
         return false
     }
 }
-
-console.log("object == deserializedBSON ? "+compare(object,deserializedBSON))
-console.log("object == deserializedBSONPure ? "+compare(object,deserializedBSONPure))
-if (BSONNative) console.log("object == deserializedBSONNative ? "+compare(object,deserializedBSONNative))
-console.log("object == deserializedJSON ? "+compare(object,deserializedJSON))
-console.log("deserializedBSON == deserializedBSONPure ? "+compare(deserializedBSON,deserializedBSONPure))
-if (BSONNative) console.log("deserializedBSON == deserializedBSONNative ? "+compare(deserializedBSON,deserializedBSONNative))
-if (BSONNative) console.log("deserializedBSONPure == deserializedBSONNative ? "+compare(deserializedBSONNative,deserializedBSONPure))
-console.log("deserializedJSON == deserializedBSON ? "+compare(deserializedJSON,deserializedBSON))
-console.log("deserializedJSON == deserializedBSONPure ? "+compare(deserializedJSON,deserializedBSONPure))
-if (BSONNative) console.log("deserializedJSON == deserializedBSONNative ? "+compare(deserializedJSON,deserializedBSONNative))
