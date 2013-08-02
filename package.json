@@ -14,7 +14,7 @@
     "nodeunit": "0.6.4"
   },
   "scripts": {
-    "test": "node_modules/.bin/nodeunit test/bson-test.js test/mongo-test.js"
+    "test": "node_modules/.bin/nodeunit test/bson-test.js test/mongo-test.js test/objectid.js"
   },
   "engines": {
     "node": ">=0.4.0"
