@@ -31,6 +31,8 @@ And several types:
     exports.Long // goog.math.Long - http://closure-library.googlecode.com/svn/docs/class_goog_math_Long.html
     exports.ObjectId = function(buffer) // buffer must be a 12-byte Buffer, accessible via the bytes property
     exports.ObjectId = function(string) // string must be a 24-char hex string
+    exports.ObjectId = function(number) // generate an ObjectId from a timestamp number
+    exports.ObjectId = function(date)   // generate an ObjectId from a date
     exports.ObjectId = function() // generates an ObjectId
     exports.Timestamp // under construction
 
