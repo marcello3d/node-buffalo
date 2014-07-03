@@ -154,6 +154,18 @@ module.exports = {
         test.equal(parsed[0](4,5), 9)
         test.done()
     },
+    "serialize/parse named [function add(x,y){ return x + y }]": function(test) {
+        var serialized = BSON.serialize([function add(x,y){
+            return x + y
+        }])
+        test.ok(serialized.length)
+        var parsed = BSON.parse(serialized)
+        test.equal(typeof parsed[0], 'function')
+        test.equal(parsed[0].name, 'add')
+        test.ok(/functionadd\(x,y\)\{returnx\+y\}/.test(parsed[0].toString().replace(/[\s\n]+/g,'')))
+        test.equal(parsed[0](4,5), 9)
+        test.done()
+    },
     "serialize/parse scoped function(){ return x + y } (with x=4, y=5)": function(test) {
         var func = function() {
             return x + y
@@ -166,7 +178,7 @@ module.exports = {
         test.ok(serialized.length)
         var parsed = BSON.parse(serialized)
         test.equal(typeof parsed[0], 'function')
-        test.ok(/function[^(]*\(\)\{with\({x:4,y:5}\){returnx\+y\}}/.test(parsed[0].toString().replace(/[\s\n]+/g,'')))
+        test.ok(/function[^(]*\(\)\{returnx\+y\}/.test(parsed[0].toString().replace(/[\s\n]+/g,'')))
         test.equal(parsed[0](), 9)
         test.done()
     }
