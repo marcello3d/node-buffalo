@@ -1,3 +1,8 @@
+Project Inactive
+----------------
+
+I am no longer have the time to work on this project. Feel free to fork!
+
 Buffalo
 ==================
 Buffalo is a lightweight [BSON][1] and [Mongo Wire Protocol][2] library for [Node.js][3]. It was built as the underlying
